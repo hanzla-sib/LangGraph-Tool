@@ -1,7 +1,9 @@
-import { Tool } from "@langchain/core/tools";
+import { Ollama } from "@langchain/community/llms/ollama";
+import { tool } from "@langchain/core/tools";
 import { z } from "zod";
-const multiply = Tool(
-  async (a, b) => {
+
+const multiply = tool(
+  async ({ a, b }) => {
     if (typeof a !== "number" || typeof b !== "number") {
       throw new Error("Both arguments must be numbers");
     }
@@ -17,8 +19,8 @@ const multiply = Tool(
   }
 );
 
-const divide = Tool(
-  async (a, b) => {
+const divide = tool(
+  async ({ a, b }) => {
     if (typeof a !== "number" || typeof b !== "number") {
       throw new Error("Both arguments must be numbers");
     }
@@ -37,8 +39,8 @@ const divide = Tool(
   }
 );
 
-const add = Tool(
-  async (a, b) => {
+const add = tool(
+  async ({ a, b }) => {
     if (typeof a !== "number" || typeof b !== "number") {
       throw new Error("Both arguments must be numbers");
     }
@@ -53,8 +55,9 @@ const add = Tool(
     }),
   }
 );
-const subtract = Tool(
-  async (a, b) => {
+
+const subtract = tool(
+  async ({ a, b }) => {
     if (typeof a !== "number" || typeof b !== "number") {
       throw new Error("Both arguments must be numbers");
     }
@@ -69,3 +72,18 @@ const subtract = Tool(
     }),
   }
 );
+
+// Initialize Ollama with a local model
+const llm = new Ollama({
+  model: "llama3.1", // or "llama2", "codellama", "mistral", etc.
+  baseUrl: "http://localhost:11434", // default Ollama URL
+});
+
+const tools = [multiply, divide, add, subtract];
+const toolNames = tools.map((tool) => tool.name);
+
+const toolsByName = Object.fromEntries(
+  tools.map((tool) => [tool.name, tool])
+);
+
+const llmWithTools = llm.bindTools(tools);
