@@ -13,8 +13,9 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
+    "start": "node index.js",
+    "graph": "node langgraph-example.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
