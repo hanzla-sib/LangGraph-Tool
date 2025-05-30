@@ -1,91 +1,130 @@
-import { Ollama } from "@langchain/ollama";
-import { ToolNode } from '@langchain/langgraph/prebuilt';
+// 📚 SIMPLE LANGCHAIN TOOLS TUTORIAL
+// This example shows how AI can use tools to get information and do calculations
+
 import { tool } from "@langchain/core/tools";
-import { StateGraph, messagesStateReducer, Annotation } from "@langchain/langgraph";
-import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
+import { ChatOllama } from "@langchain/ollama";
 import { z } from "zod";
-import { MemorySaver } from "@langchain/langgraph";
+import { ToolMessage } from "@langchain/core/messages";
 
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
+console.log("🎯 Welcome to LangChain Tools Tutorial!");
+console.log("This shows how AI can use tools to help answer questions\n");
 
-// Custom weather tool
+// 🛠️ STEP 1: Create Tools
+// Tools are functions that the AI can call to get information or do tasks
+
+// Weather Tool - pretends to get weather information
 const weatherTool = tool(
-  async ({ location }) => {
-    // This is a mock weather API - in production you'd use a real weather service
-    const weatherData = {
-      "san francisco": "Sunny, 72°F (22°C), Light breeze from the west",
-      "sf": "Sunny, 72°F (22°C), Light breeze from the west",
-      "new york": "Partly cloudy, 68°F (20°C), Moderate humidity",
-      "ny": "Partly cloudy, 68°F (20°C), Moderate humidity",
-      "london": "Overcast, 59°F (15°C), Light rain expected",
-      "tokyo": "Clear skies, 75°F (24°C), High humidity",
-      "paris": "Foggy, 62°F (17°C), Low visibility in the morning"
-    };
-    
-    const normalizedLocation = location.toLowerCase();
-    const weather = weatherData[normalizedLocation] || `Weather data not available for ${location}. Try: San Francisco, New York, London, Tokyo, or Paris.`;
-    
-    return `Current weather in ${location}: ${weather}`;
+  ({ location }) => {
+    console.log(`  🌤️  Getting weather for: ${location}`);
+    return `The weather in ${location} is sunny and 72°F`;
   },
   {
     name: "get_weather",
-    description: "Get current weather information for a specific location",
+    description: "Get current weather for a location",
     schema: z.object({
-      location: z.string().describe("The city or location to get weather for"),
+      location: z.string().describe("City name like 'San Francisco'"),
     }),
   }
 );
 
-// Custom calculator tool
-const calculatorTool = tool(
-  async ({ expression }) => {
-    try {
-      // Simple evaluation - in production you'd want a safer math parser
-      const result = Function(`"use strict"; return (${expression})`)();
-      return `The result of ${expression} is ${result}`;
-    } catch (error) {
-      return `Error calculating ${expression}: ${error.message}`;
-    }
+// Math Tool - adds two numbers
+const mathTool = tool(
+  ({ a, b }) => {
+    console.log(`  🧮  Calculating: ${a} + ${b}`);
+    return `${a} + ${b} = ${a + b}`;
   },
   {
-    name: "calculator",
-    description: "Perform basic mathematical calculations",
+    name: "add_numbers",
+    description: "Add two numbers together",
     schema: z.object({
-      expression: z.string().describe("Mathematical expression to evaluate (e.g., '2 + 2', '10 * 5')"),
+      a: z.number().describe("First number"),
+      b: z.number().describe("Second number"),
     }),
   }
 );
 
-// Define the tools for the agent to use
-const agentTools = [weatherTool, calculatorTool];
-const agentModel = new Ollama({
-  model: "llama3.1:latest", // Make sure this model is available in your Ollama
-  temperature: 0,
-  maxRetries: 2,
-});
-// Initialize memory to persist state between graph runs
-const agentCheckpointer = new MemorySaver();
-const agent = createReactAgent({
-  llm: agentModel,
-  tools: agentTools,
-  checkpointSaver: agentCheckpointer,
+// 🤖 STEP 2: Set up AI Model
+console.log("🤖 Setting up AI model...");
+const aiModel = new ChatOllama({
+  model: "llama3.1:latest",
 });
 
-// Now it's time to use!
-const agentFinalState = await agent.invoke(
-  { messages: [new HumanMessage("what is the current weather in sf")] },
-  { configurable: { thread_id: "42" } },
-);
+// Give the AI access to our tools
+const aiWithTools = aiModel.bindTools([weatherTool, mathTool]);
 
-console.log(
-  agentFinalState.messages[agentFinalState.messages.length - 1].content,
-);
+// 💬 STEP 3: Simple Function to Chat with AI
+async function askAI(question) {
+  console.log(`\n❓ Question: ${question}`);
+  console.log("=" + "=".repeat(50));
+  
+  // Start conversation
+  let messages = [{ role: "user", content: question }];
+  let stepNumber = 1;
+  
+  while (true) {
+    console.log(`\n📍 Step ${stepNumber}: AI is thinking...`);
+    
+    // Get AI's response
+    const aiResponse = await aiWithTools.invoke(messages);
+    
+    // Show what AI said
+    if (aiResponse.content) {
+      console.log(`💭 AI says: ${aiResponse.content}`);
+    }
+    
+    // Check if AI wants to use tools
+    if (aiResponse.tool_calls && aiResponse.tool_calls.length > 0) {
+      console.log(`\n🔧 AI wants to use ${aiResponse.tool_calls.length} tool(s):`);
+      
+      // Add AI's message to conversation
+      messages.push(aiResponse);
+      
+      // Run each tool the AI requested
+      for (const toolRequest of aiResponse.tool_calls) {
+        console.log(`\n⚡ Running tool: ${toolRequest.name}`);
+        console.log(`   📝 With data:`, toolRequest.args);
+        
+        try {
+          let result;
+          
+          // Run the correct tool
+          if (toolRequest.name === "get_weather") {
+            result = await weatherTool.invoke(toolRequest.args);
+          } else if (toolRequest.name === "add_numbers") {
+            result = await mathTool.invoke(toolRequest.args);
+          }
+          
+          console.log(`   ✅ Result: ${result}`);
+          
+          // Tell AI what the tool returned
+          messages.push(new ToolMessage({
+            content: result,
+            tool_call_id: toolRequest.id
+          }));
+          
+        } catch (error) {
+          console.log(`   ❌ Error: ${error.message}`);
+          messages.push(new ToolMessage({
+            content: `Error: ${error.message}`,
+            tool_call_id: toolRequest.id
+          }));
+        }
+      }
+      
+      stepNumber++;
+      
+    } else {
+      // AI is done - no more tools needed
+      console.log(`\n🎯 Final Answer: ${aiResponse.content}`);
+      console.log("\n" + "=".repeat(52));
+      console.log("✨ Done!");
+      break;
+    }
+  }
+}
 
-const agentNextState = await agent.invoke(
-  { messages: [new HumanMessage("what about ny")] },
-  { configurable: { thread_id: "42" } },
-);
+// 🚀 STEP 4: Test it!
+console.log("\n🚀 Let's test our AI with tools!");
 
-console.log(
-  agentNextState.messages[agentNextState.messages.length - 1].content,
-);
+// Try asking a question that needs both tools
+await askAI("What's the weather in New York? Also, what is 25 + 17?");
