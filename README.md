@@ -14,6 +14,7 @@
 - [Understanding the Output](#understanding-the-output)
 - [Learning Path](#learning-path)
 - [Next Steps](#next-steps)
+- [License & Copyright](#license--copyright)
 
 ## 🤖 What is LangChain?
 
@@ -258,12 +259,41 @@ This is a learning project! Feel free to:
 - Create more complex examples
 - Share your own LangChain/LangGraph projects
 
-## 📄 License
+## 📄 License & Copyright
 
-This project is for educational purposes. Feel free to use and modify as needed.
+### 📜 **License Information**
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### ©️ **Copyright Protection**
+- **Copyright (c) 2025 LangGraph Tutorial Project**
+- **Educational Content**: Original tutorials, explanations, and documentation
+- **Code Examples**: Open source under MIT License
+- **Attribution Required**: Please credit this tutorial when using in educational materials
+
+### 🤝 **Usage Rights**
+✅ **You CAN:**
+- Use this code for learning and education
+- Modify and adapt for your own projects
+- Share with proper attribution
+- Use in commercial projects (with MIT License terms)
+
+❌ **Please DON'T:**
+- Copy the entire tutorial without attribution
+- Claim this work as your own
+- Remove copyright notices
+- Use for plagiarism in academic work
+
+### 🎓 **For Students & Educators**
+If you're using this tutorial for:
+- **Academic courses**: Please cite as educational resource
+- **Teaching materials**: Include attribution to original tutorial
+- **Blog posts/articles**: Link back to original repository
+- **Video tutorials**: Mention original source
 
 ---
 
 **Happy coding! 🎉** 
 
 *Remember: This simple example is the foundation for building powerful AI agents with LangGraph. Master these concepts, and you'll be ready to build amazing AI applications!*
+
+**📜 Licensed under MIT | © 2025 LangGraph Tutorial Project**

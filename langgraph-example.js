@@ -1,3 +1,12 @@
+/**
+ * LangGraph Tutorial for Beginners - Simple Graph Example
+ * Copyright (c) 2025 LangGraph Tutorial Project
+ * Licensed under MIT License - see LICENSE file for details
+ * 
+ * Educational Purpose: Learn AI workflows with nodes and edges
+ * Repository: https://github.com/hanzla-sib/LangGraph-Tool
+ */
+
 // 🎯 SUPER SIMPLE LANGGRAPH FOR BEGINNERS
 // Your first LangGraph! Easy to understand nodes and edges 🚀
 

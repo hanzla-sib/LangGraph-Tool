@@ -1,3 +1,12 @@
+/**
+ * LangChain Tools Tutorial - Simple Loop Example
+ * Copyright (c) 2025 LangGraph Tutorial Project
+ * Licensed under MIT License - see LICENSE file for details
+ * 
+ * Educational Purpose: Learn basic LangChain tools before LangGraph
+ * Repository: https://github.com/hanzla-sib/LangGraph-Tool
+ */
+
 // 📚 SIMPLE LANGCHAIN TOOLS TUTORIAL
 // This example shows how AI can use tools to get information and do calculations
 

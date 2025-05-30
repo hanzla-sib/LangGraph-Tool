@@ -1,7 +1,7 @@
-{
-  "name": "langgraph-tool",
+{  "name": "langgraph-tool",
   "version": "1.0.0",
-  "description": "",
+  "description": "🚀 LangGraph Tutorial for Beginners - Learn AI workflows with nodes and edges, step by step!",
+  "keywords": ["langgraph", "langchain", "ai", "tutorial", "beginners", "nodes", "edges", "workflow"],
   "homepage": "https://github.com/hanzla-sib/LangGraph-Tool#readme",
   "bugs": {
     "url": "https://github.com/hanzla-sib/LangGraph-Tool/issues"
@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/hanzla-sib/LangGraph-Tool.git"
   },
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": "LangGraph Tutorial Project",
   "type": "module",
   "main": "index.js",  "scripts": {
     "start": "node index.js",

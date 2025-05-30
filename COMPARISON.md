@@ -1,3 +1,10 @@
+<!--
+LangGraph vs LangChain Comparison Guide
+Copyright (c) 2025 LangGraph Tutorial Project
+Licensed under MIT License - Educational use with attribution required
+Repository: https://github.com/hanzla-sib/LangGraph-Tool
+-->
+
 # 🔗 Simple Loop vs LangGraph: Complete Beginner's Guide
 
 **Perfect for your first time learning!** This guide shows you the difference between traditional programming and modern AI agent architecture.
